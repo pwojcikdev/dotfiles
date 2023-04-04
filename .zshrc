@@ -119,3 +119,15 @@ setopt share_history          # share command history data
 
 # Created by `pipx` on 2022-10-06 14:20:08
 export PATH="$PATH:/Users/piotr/.local/bin"
+
+# Custom DOTFILES directory
+export DOTFILES="$HOME/dotfiles"
+
+# Loop through all "bin" subdirectories under the DOTFILES folder
+for bin_dir in "$DOTFILES"/**/bin; do
+  # If the current item is a directory
+  if [ -d "$bin_dir" ]; then
+    # Add the "bin" subdirectory to the PATH
+    export PATH="$PATH:$bin_dir"
+  fi
+done
