@@ -10,11 +10,11 @@ export ZSH="$HOME/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
 
-ZSH_THEME="agnoster"
+# ZSH_THEME="agnoster"
 
 # Source local configurations if the file exists
-if [[ -f ~/.zshrc_local ]]; then
-  source ~/.zshrc_local
+if [[ -f ~/.zshrc-local ]]; then
+  source ~/.zshrc-local
 fi
 
 # Set list of themes to pick from when loading at random
