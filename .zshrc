@@ -10,7 +10,12 @@ export ZSH="$HOME/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
 
-ZSH_THEME="apple"
+ZSH_THEME="agnoster"
+
+# Source local configurations if the file exists
+if [[ -f ~/.zshrc_local ]]; then
+  source ~/.zshrc_local
+fi
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -107,15 +112,14 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias activate="source .venv/bin/activate"
-
 ## History command configuration
 setopt extended_history       # record timestamp of command in HISTFILE
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
 setopt hist_ignore_dups       # ignore duplicated commands history list
 setopt hist_ignore_space      # ignore commands that start with space
 setopt hist_verify            # show command with history expansion to user before running it
-setopt share_history          # share command history data
+# setopt share_history          # share command history data
+unsetopt share_history
 
 # Created by `pipx` on 2022-10-06 14:20:08
 export PATH="$PATH:/Users/piotr/.local/bin"
