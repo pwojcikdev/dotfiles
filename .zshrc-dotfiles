@@ -9,3 +9,21 @@ for bin_dir in "$DOTFILES"/**/bin; do
     export PATH="$PATH:$bin_dir"
   fi
 done
+
+# Loop through all .env files under the DOTFILES folder
+for file in "$DOTFILES"/**/.env; do
+  # If the current item is a file
+  if [ -f "$file" ]; then
+    # Source the .env file
+    source "$file"
+  fi
+done
+
+# Loop through all .zsh files under the DOTFILES folder
+for file in "$DOTFILES"/**/*.zsh; do
+  # If the current item is a file
+  if [ -f "$file" ]; then
+    # Source the .zsh file
+    source "$file"
+  fi
+done
