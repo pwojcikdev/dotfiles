@@ -8,6 +8,7 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # zsh
 ln -s ${BASEDIR}/.zshrc ~/.zshrc
+ln -s ${BASEDIR}/.zshrc-dotfiles ~/.zshrc-dotfiles
 
 # git
 # ln -s ${BASEDIR}/gitconfig ~/.gitconfig
