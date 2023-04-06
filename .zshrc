@@ -121,7 +121,7 @@ setopt hist_verify            # show command with history expansion to user befo
 # setopt share_history          # share command history data
 unsetopt share_history
 
-# Created by `pipx` on 2022-10-06 14:20:08
-export PATH="$PATH:/Users/piotr/.local/bin"
+# Created by `pipx`
+export PATH="$PATH:$HOME/.local/bin"
 
 source ~/.zshrc-dotfiles
