@@ -1,0 +1,10 @@
+[user]
+	name = Piotr Wójcik
+	email = 3044353+pwojcikdev@users.noreply.github.com
+[core]
+	excludesfile = ~/.gitignore
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
