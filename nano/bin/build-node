@@ -1,16 +1,23 @@
 #!/bin/bash
+set -euox pipefail
 
 NAME=${1:-nano-node}
-ENV_NAME=${2:-nano-env}
-COMPILER=${3:-gcc}
 
-echo "NAME: $NAME"
-echo "ENV_NAME: $ENV_NAME"
-echo "COMPILER: $COMPILER"
+NANO_ENV=${NANO_ENV:-nano-env}
+NANO_COMPILER=${NANO_COMPILER:-gcc}
 
-# build environment image
-docker build -f docker/ci/Dockerfile-base -t $ENV_NAME:base .
-docker build --build-arg ENV_REPOSITORY=$ENV_NAME -f docker/ci/Dockerfile-$COMPILER -t $ENV_NAME:$COMPILER .
+echo "Image name: $NAME"
+echo "Compiler: $NANO_COMPILER"
+echo "Build environment: $NANO_ENV"
 
-# build node image
-docker build --build-arg ENV_REPOSITORY=$ENV_NAME --build-arg COMPILER=$COMPILER -f docker/node/Dockerfile -t $NAME .
+DOCKERFILES_DIR="$DOTFILES/nano/docker"
+
+# Enable new docker build system
+DOCKER_BUILDKIT=1
+
+# Build environment image
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-base" -t "${NANO_ENV}:base" .
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-${NANO_COMPILER}" -t "${NANO_ENV}:${NANO_COMPILER}" --build-arg ENV_REPOSITORY="$NANO_ENV" .
+
+# Build node image
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-fast" -t "$NAME" --build-arg ENV_REPOSITORY="$NANO_ENV" --build-arg COMPILER="$NANO_COMPILER" .
