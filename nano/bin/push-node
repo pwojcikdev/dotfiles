@@ -5,5 +5,5 @@ NAME=${1:-nano-node}
 
 REMOTE_HUB="${NANO_DOCKER_HUB}"
 
-docker tag "${NAME}" "${REMOTE_HUB}/${$NAME}"
+docker tag "${NAME}" "${REMOTE_HUB}/${NAME}"
 docker push "${REMOTE_HUB}/${NAME}"

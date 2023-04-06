@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:experimental
 ARG ENV_REPOSITORY=nanocurrency/nano-env
 ARG COMPILER=gcc
-FROM ${ENV_REPOSITORY}:${COMPILER}
+FROM ${ENV_REPOSITORY}:${COMPILER} as builder
 
 ARG NETWORK=live
 ARG CI_TAG=DEV_BUILD
@@ -29,8 +29,8 @@ FROM ubuntu:22.04
 RUN groupadd --gid 1000 nanocurrency && \
 useradd --uid 1000 --gid nanocurrency --shell /bin/bash --create-home nanocurrency
 
-COPY --from=0 /tmp/out/nano_node /usr/bin
-COPY --from=0 /etc/nano-network /etc
+COPY --from=builder  /tmp/out/nano_node /usr/bin
+COPY --from=builder  /etc/nano-network /etc
 COPY docker/node/entry.sh /usr/bin/entry.sh
 COPY docker/node/config /usr/share/nano/config
 RUN chmod +x /usr/bin/entry.sh
