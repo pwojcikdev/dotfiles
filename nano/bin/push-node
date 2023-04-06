@@ -1,6 +1,9 @@
 #!/bin/bash
+set -euox pipefail
 
 NAME=${1:-nano-node}
 
-docker tag $NAME pwojcikdev/$NAME
-docker push pwojcikdev/$NAME
+REMOTE_HUB="${NANO_DOCKER_HUB}"
+
+docker tag "${NAME}" "${REMOTE_HUB}/${$NAME}"
+docker push "${REMOTE_HUB}/${NAME}"
