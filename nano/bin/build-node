@@ -6,6 +6,12 @@ NAME=${1:-nano-node}
 NANO_ENV=${NANO_ENV:-nano-env}
 NANO_COMPILER=${NANO_COMPILER:-gcc}
 
+# Ensure the current directory is nano node directory
+if [ ! -f "CMakeLists.txt" ] || [ ! -d "nano" ]; then
+    echo "Error: Please make sure you are in the nano-node directory."
+    exit 1
+fi
+
 echo "Image name: $NAME"
 echo "Compiler: $NANO_COMPILER"
 echo "Build environment: $NANO_ENV"
