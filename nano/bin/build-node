@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euox pipefail
+set -euo pipefail
 
 NAME=${1:-nano-node}
 
@@ -12,9 +12,8 @@ if [ ! -f "CMakeLists.txt" ] || [ ! -d "nano" ]; then
     exit 1
 fi
 
-echo "Image name: $NAME"
-echo "Compiler: $NANO_COMPILER"
-echo "Build environment: $NANO_ENV"
+echo "Image name: '$NAME'"
+echo "Build environment: '${NANO_ENV}:${NANO_COMPILER}'"
 
 DOCKERFILES_DIR="$DOTFILES/nano/docker"
 
