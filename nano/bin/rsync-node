@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euox pipefail
+
+TARGET_DIR="${1:-nano-node}"
+REMOTE_HOST="${NANO_REMOTE_HOST}"
+
+# Ensure the current directory is nano node directory
+if [ ! -f "CMakeLists.txt" ] || [ ! -d "nano" ]; then
+    echo "Error: Please make sure you are in the nano-node directory."
+    exit 1
+fi
+
+# Rsync the nano-node directory
+rsync -av --no-owner --no-group --exclude "cmake-build*" --exclude ".git" ./ "${REMOTE_HOST}:~/${TARGET_DIR}/"
