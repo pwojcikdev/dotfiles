@@ -25,4 +25,4 @@ docker build -f "${DOCKERFILES_DIR}/Dockerfile-base" -t "${NANO_ENV}:base" .
 docker build -f "${DOCKERFILES_DIR}/Dockerfile-${NANO_COMPILER}" -t "${NANO_ENV}:${NANO_COMPILER}" --build-arg ENV_REPOSITORY="$NANO_ENV" .
 
 # Build node image
-docker build -f "${DOCKERFILES_DIR}/Dockerfile-fast" -t "$NAME" --build-arg ENV_REPOSITORY="$NANO_ENV" --build-arg COMPILER="$NANO_COMPILER" .
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-node" -t "$NAME" --build-arg ENV_REPOSITORY="$NANO_ENV" --build-arg COMPILER="$NANO_COMPILER" .
