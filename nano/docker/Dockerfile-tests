@@ -1,0 +1,35 @@
+# syntax = docker/dockerfile:experimental
+ARG ENV_REPOSITORY=nanocurrency/nano-env
+ARG COMPILER=gcc
+FROM ${ENV_REPOSITORY}:${COMPILER} as builder
+
+ARG NETWORK=dev
+ARG CI_TAG=DEV_BUILD
+ARG CI_BUILD=ON
+ARG BUILD_TYPE=Debug
+ARG BUILD_TARGET=build_tests
+ARG SANITIZERS
+
+ADD ./ /tmp/src
+
+WORKDIR /tmp/build
+
+RUN --mount=type=cache,target=/tmp/build \
+cmake /tmp/src \
+-DCI_BUILD=${CI_BUILD} \
+-DPORTABLE=1 \
+-DACTIVE_NETWORK=nano_${NETWORK}_network \
+-DNANO_TEST=ON \
+-DNANO_WARN_TO_ERR=ON \
+-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+-DCI_TEST="1" \
+-DNANO_STACKTRACE_BACKTRACE=ON \
+${SANITIZERS:-}
+
+RUN --mount=type=cache,target=/tmp/build \
+make ${BUILD_TARGET} -j $(nproc)
+
+RUN --mount=type=cache,target=/tmp/build \
+cp -r /tmp/build /tmp/out
+
+ENTRYPOINT [ "/tmp/out/core_test" ]

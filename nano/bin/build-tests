@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euo pipefail
+
+NAME=${1:-nano-tests}
+
+NANO_ENV=${NANO_ENV:-nano-env}
+NANO_COMPILER=${NANO_COMPILER:-gcc}
+
+# Ensure the current directory is nano node directory
+if [ ! -f "CMakeLists.txt" ] || [ ! -d "nano" ]; then
+    echo "Error: Please make sure you are in the nano-node directory."
+    exit 1
+fi
+
+echo "Image name: '$NAME'"
+echo "Build environment: '${NANO_ENV}:${NANO_COMPILER}'"
+
+DOCKERFILES_DIR="$DOTFILES/nano/docker"
+
+# Enable new docker build system
+DOCKER_BUILDKIT=1
+
+# Build environment image
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-base" -t "${NANO_ENV}:base" .
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-${NANO_COMPILER}" -t "${NANO_ENV}:${NANO_COMPILER}" --build-arg ENV_REPOSITORY="$NANO_ENV" .
+
+# Build node image
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-tests" -t "$NAME" --build-arg ENV_REPOSITORY="$NANO_ENV" --build-arg COMPILER="$NANO_COMPILER" .
