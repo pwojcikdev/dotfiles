@@ -4,6 +4,8 @@ set -euo pipefail
 NANO_ENV=${NANO_ENV:-nano-env}
 NANO_COMPILER=${NANO_COMPILER:-gcc}
 
+echo "Building environment: '${NANO_ENV}:${NANO_COMPILER}'"
+
 DOCKERFILES_DIR="$DOTFILES/nano/docker"
 
 # Enable new docker build system
@@ -11,4 +13,4 @@ DOCKER_BUILDKIT=1
 
 # Build environment image
 docker build -f "${DOCKERFILES_DIR}/Dockerfile-base" -t "${NANO_ENV}:base" .
-docker build -f "${DOCKERFILES_DIR}/Dockerfile-${NANO_COMPILER}" -t "${NANO_ENV}:${NANO_COMPILER}" --build-arg ENV_REPOSITORY="$NANO_ENV" .
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-${NANO_COMPILER}" -t "${NANO_ENV}:${NANO_COMPILER}" --build-arg ENV_REPOSITORY="${NANO_ENV}" .
