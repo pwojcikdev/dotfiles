@@ -10,7 +10,7 @@ ARG BUILD_TYPE=Debug
 ARG BUILD_TARGET=build_tests
 ARG SANITIZERS
 
-ADD ./ /tmp/src
+COPY ./ /tmp/src
 
 WORKDIR /tmp/build
 
@@ -32,4 +32,14 @@ make ${BUILD_TARGET} -j $(nproc)
 RUN --mount=type=cache,target=/tmp/build \
 cp -r /tmp/build /tmp/out
 
-ENTRYPOINT [ "/tmp/out/core_test" ]
+FROM ubuntu:22.04
+
+COPY --from=builder  /tmp/out/core_test /usr/bin
+COPY --from=builder  /tmp/out/rpc_test /usr/bin
+COPY --from=builder  /tmp/out/slow_test /usr/bin
+
+WORKDIR /root
+USER root
+
+ENV PATH="${PATH}:/usr/bin"
+ENTRYPOINT [ "core_test" ]
