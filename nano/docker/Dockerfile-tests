@@ -24,6 +24,7 @@ cmake /tmp/src \
 -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 -DCI_TEST="1" \
 -DNANO_STACKTRACE_BACKTRACE=ON \
+-DNANO_BACKTRACE_INCLUDE="</tmp/backtrace.h>" \
 ${SANITIZERS:-}
 
 RUN --mount=type=cache,target=/tmp/build \
