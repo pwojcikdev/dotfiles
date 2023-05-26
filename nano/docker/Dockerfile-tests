@@ -1,46 +1,28 @@
-# syntax = docker/dockerfile:experimental
-ARG ENV_REPOSITORY=nanocurrency/nano-env
-ARG COMPILER=gcc
-FROM ${ENV_REPOSITORY}:${COMPILER} as builder
-
-ARG NETWORK=dev
-ARG CI_TAG=DEV_BUILD
-ARG CI_BUILD=ON
-ARG BUILD_TYPE=Debug
-ARG BUILD_TARGET=build_tests
-ARG SANITIZERS
-
-COPY ./ /tmp/src
-
-WORKDIR /tmp/build
-
-RUN --mount=type=cache,target=/tmp/build \
-cmake /tmp/src \
--DCI_BUILD=${CI_BUILD} \
--DPORTABLE=1 \
--DACTIVE_NETWORK=nano_${NETWORK}_network \
--DNANO_TEST=ON \
--DNANO_WARN_TO_ERR=ON \
--DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
--DCI_TEST="1" \
--DNANO_STACKTRACE_BACKTRACE=ON \
--DNANO_BACKTRACE_INCLUDE="</tmp/backtrace.h>" \
-${SANITIZERS:-}
-
-RUN --mount=type=cache,target=/tmp/build \
-make ${BUILD_TARGET} -j $(nproc)
-
-RUN --mount=type=cache,target=/tmp/build \
-cp -r /tmp/build /tmp/out
-
 FROM ubuntu:22.04
 
-COPY --from=builder  /tmp/out/core_test /usr/bin
-COPY --from=builder  /tmp/out/rpc_test /usr/bin
-COPY --from=builder  /tmp/out/slow_test /usr/bin
+ARG COMPILER=gcc
+ARG NANO_SANITIZER
+ARG NANO_COVERAGE
 
-WORKDIR /root
+# Install build dependencies
+COPY ./ci/prepare/linux /tmp/prepare
+RUN /tmp/prepare/prepare.sh
+
+COPY ./ /root/src
+WORKDIR /root/src
+
+# Build tests
+RUN --mount=type=cache,target=/root/src/build \
+    ci/build-tests.sh
+
+RUN --mount=type=cache,target=/root/src/build \
+    cp -r /root/src /root/out
+
+RUN ldconfig
+
+WORKDIR /root/out
 USER root
 
 ENV PATH="${PATH}:/usr/bin"
-ENTRYPOINT [ "core_test" ]
+ENV PATH="${PATH}:/root/out/build"
+CMD ["core_test"]
