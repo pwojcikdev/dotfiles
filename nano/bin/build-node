@@ -3,8 +3,7 @@ set -euo pipefail
 
 NAME=${1:-nano-node}
 
-NANO_ENV=${NANO_ENV:-nano-env}
-NANO_COMPILER=${NANO_COMPILER:-gcc}
+COMPILER=${COMPILER:-gcc}
 
 # Ensure the current directory is nano node directory
 if [ ! -f "CMakeLists.txt" ] || [ ! -d "nano" ]; then
@@ -13,7 +12,7 @@ if [ ! -f "CMakeLists.txt" ] || [ ! -d "nano" ]; then
 fi
 
 echo "Image name: '$NAME'"
-echo "Build environment: '${NANO_ENV}:${NANO_COMPILER}'"
+echo "Compiler: '${COMPILER}'"
 
 DOCKERFILES_DIR="$DOTFILES/nano/docker"
 
@@ -21,4 +20,4 @@ DOCKERFILES_DIR="$DOTFILES/nano/docker"
 DOCKER_BUILDKIT=1
 
 # Build node image
-docker build -f "${DOCKERFILES_DIR}/Dockerfile-node" -t "$NAME" --build-arg ENV_REPOSITORY="$NANO_ENV" --build-arg COMPILER="$NANO_COMPILER" .
+docker build -f "${DOCKERFILES_DIR}/Dockerfile-node" -t "$NAME" --build-arg COMPILER="$COMPILER" .
