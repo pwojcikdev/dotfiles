@@ -20,4 +20,4 @@ DOCKERFILES_DIR="$DOTFILES/nano/docker"
 DOCKER_BUILDKIT=1
 
 # Build node image
-docker build -f "${DOCKERFILES_DIR}/Dockerfile-tests" -t "$NAME" --build-arg COMPILER="$COMPILER" .
+docker buildx build -f "${DOCKERFILES_DIR}/Dockerfile-tests" -t "$NAME" --build-arg COMPILER="$COMPILER" .
