@@ -22,9 +22,11 @@ RUN --mount=type=cache,target=/root/src/build \
 
 RUN ldconfig
 
-WORKDIR /root/out
+COPY --from=dockerfiles all_tests /root/out/build/
+
+WORKDIR /root/out/build
 USER root
 
 ENV PATH="${PATH}:/usr/bin"
 ENV PATH="${PATH}:/root/out/build"
-CMD ["core_test"]
+CMD ["all_tests"]

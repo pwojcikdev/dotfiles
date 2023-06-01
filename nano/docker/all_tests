@@ -1,0 +1,88 @@
+#!/bin/bash
+set -o pipefail
+
+cat << "EOF"                                                                                                        
+                                __            __             _ __     
+    ____  ____ _____  ____     / /____  _____/ /________  __(_) /____ 
+   / __ \/ __ `/ __ \/ __ \   / __/ _ \/ ___/ __/ ___/ / / / / __/ _ \
+  / / / / /_/ / / / / /_/ /  / /_/  __(__  ) /_(__  ) /_/ / / /_/  __/
+ /_/ /_/\__,_/_/ /_/\____/   \__/\___/____/\__/____/\__,_/_/\__/\___/ 
+                                                                                                                               
+EOF
+
+# ----------------------------------
+# Colors
+# ----------------------------------
+NOCOLOR='\033[0m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+LIGHTGRAY='\033[0;37m'
+DARKGRAY='\033[1;30m'
+LIGHTRED='\033[1;31m'
+LIGHTGREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+LIGHTBLUE='\033[1;34m'
+LIGHTPURPLE='\033[1;35m'
+LIGHTCYAN='\033[1;36m'
+WHITE='\033[1;37m'
+
+divider="------------------------------------------------------------------------"
+
+printHeadline() {
+    printf -- "[==========] $1\n"
+}
+
+printHeader() {
+    printf "\n${LIGHTBLUE}"
+    printf -- "$divider\n"
+    # printf -- "[==========] $1\n"
+    printHeadline $1
+    printf -- "$divider\n"
+    printf "${NOCOLOR}\n"
+}
+
+parse_gtest_failures() {
+    awk '/\[  FAILED  \]/ {print $0}' 
+}
+
+parse_test_summary() {
+    # awk '/.*\[==========] .* tests from .* test suite ran..*/ {flag=1} flag'
+    sed -n '/.*\[==========] .* tests from .* test suite ran..*/, $p'
+}
+
+declare -a failed_tests
+declare -a test_summary
+
+printHeader "CORE TESTS"
+
+GTEST_COLOR=yes ./core_test | tee core_test.log
+if [ $? -ne 0 ]; then
+    core_failures=$(parse_gtest_failures < core_test.log)
+    failed_tests+=("$core_failures")
+fi
+core_summary=$(parse_test_summary < core_test.log)
+test_summary+=("$core_summary")
+
+printHeader "RPC TESTS"
+
+GTEST_COLOR=yes ./rpc_test | tee rpc_test.log
+if [ $? -ne 0 ]; then
+    rpc_failures=$(parse_gtest_failures < rpc_test.log)
+    failed_tests+=("$rpc_failures")
+fi
+rpc_summary=$(parse_test_summary < rpc_test.log)
+test_summary+=("$rpc_summary")
+
+printHeader "SUMMARY"
+
+printHeadline "CORE TESTS:"
+echo "$core_summary"
+
+echo ""
+
+printHeadline "RPC TESTS:"
+echo "$rpc_summary"

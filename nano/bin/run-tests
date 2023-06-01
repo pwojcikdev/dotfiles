@@ -21,3 +21,6 @@ DOCKER_BUILDKIT=1
 
 # Build node image
 docker buildx build -f "${DOCKERFILES_DIR}/Dockerfile-tests" -t "$NAME" --build-arg COMPILER="$COMPILER" --build-context dockerfiles="$DOCKERFILES_DIR" .
+
+# Run the built image
+docker run -it --rm "$NAME"
