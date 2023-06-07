@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1
+
+FROM ubuntu:22.04
+
+ARG COMPILER=gcc
+ARG NANO_SANITIZER
+ARG NANO_COVERAGE
+
+# Install build dependencies
+COPY ./ci/prepare/linux /tmp/prepare
+RUN /tmp/prepare/prepare.sh
+
+# Install gtest-parallel
+RUN apt-get update -y
+RUN apt-get install -y python3 python3-pip
+RUN git clone https://github.com/pwojcikdev/gtest-parallel.git && cd gtest-parallel && pip install .
+
+COPY ./ /root/src
+WORKDIR /root/src
+
+# Build tests
+RUN --mount=type=cache,target=/root/src/build \
+    ci/build-tests.sh
+
+RUN --mount=type=cache,target=/root/src/build \
+    cp -r /root/src /root/out
+
+RUN ldconfig
+
+COPY --from=dockerfiles all_tests /root/out/build/
+
+WORKDIR /root/out/build
+USER root
+
+ENV PATH="${PATH}:/usr/bin"
+ENV PATH="${PATH}:/root/out/build"
+
+ENTRYPOINT ["gtest-parallel"]

@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+
+NAME=${1:-nano-tests-parallel}
+
+COMPILER=${COMPILER:-gcc}
+
+# Ensure the current directory is nano node directory
+if [ ! -f "CMakeLists.txt" ] || [ ! -d "nano" ]; then
+    echo "Error: Please make sure you are in the nano-node directory."
+    exit 1
+fi
+
+echo "Image name: '$NAME'"
+echo "Compiler: '${COMPILER}'"
+
+DOCKERFILES_DIR="$DOTFILES/nano/docker"
+
+# Enable new docker build system
+DOCKER_BUILDKIT=1
+
+# Build node image
+docker buildx build -f "${DOCKERFILES_DIR}/Dockerfile-tests-parallel" -t "$NAME" --build-arg COMPILER="$COMPILER" --build-context dockerfiles="$DOCKERFILES_DIR" .
